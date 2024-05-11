@@ -1,57 +1,51 @@
 import pygame
 from pygame import mixer
+from scripts.ui.button import Button
+from scripts.loader import ResourceLoader
 
 pygame.init()
-X = 700
-Y = 700
+w = 700 
+h = 700
 
-scrn = pygame.display.set_mode((X, Y), pygame.RESIZABLE) ## window size and calling it resizable
+window = pygame.display
 
-pygame.display.set_caption("GARE") ## window name
+scrn = window.set_mode((w, h), pygame.RESIZABLE) ## window size and calling it resizable
+window.set_caption("GARE") ## window name
 
-mainMenuTest = pygame.image.load("assets\\main menu template.png").convert() ## making the GUI surface
-mainMenuTest = pygame.transform.scale(mainMenuTest, (X, Y)) ## scaling the gui surface to the beginning window size
-buttonTest = pygame.image.load("assets\\button.png").convert()
+mm = ResourceLoader.loadImage("main menu template") ## making the GUI surface
+icon = ResourceLoader.loadImage("icon").convert() ## making the icon surface
 
-icon = pygame.image.load("assets\\icon.png").convert() ## making the icon surface
-
-pygame.display.set_icon(icon) ## setting the icon in the top left
-scrn.blit(mainMenuTest, (0, 0))
-
-mixer.init()
-pygame.mixer.set_num_channels(8)
-music = pygame.mixer.Channel(1)
-mainMenuTestMusic = pygame.mixer.Sound("assets\\fallout 4 menu.mp3")    ## music biz, all you need to know is that the music for the main menu lies in channel 1, in a surface (for audio?) called music
-music.set_volume(1)
-music.play(mainMenuTestMusic)
+window.set_icon(icon) ## setting the icon in the top left
+button = Button("button", w/2,h/2,50,50)
 
 status = True
+
+def handle_input():
+    for i in pygame.event.get():
+        if i.type == pygame.QUIT:
+            return False
+    
+    return True
+
+def draw(mx, my):
+    pass
+
+mouse = pygame.mouse
+
 while (status):
-    
-                                                    ## RUNTIME
-    
-    w, h = pygame.display.get_surface().get_size() ## making variables for the current window size
-    mainMenuTest = pygame.image.load("assets\\main menu template.png").convert()
-    buttonTest = pygame.image.load("assets\\button.png").convert()
+    mx, my = mouse.get_pos()
+    ## RUNTIME
+    w, h = window.get_surface().get_size() ## making variables for the current window size
+    mainMenuTest = mm.convert()
     mainMenuTest = pygame.transform.scale(mainMenuTest, (w,h))
     scrn.blit(mainMenuTest, (0, 0))
-    scrn.blit(buttonTest, (15,15))
-    pygame.display.flip()
+    button.update_with_pos(w/2, h/2, scrn,mouse)
+    if button.been_clicked():
+        print("clicked!")
+    window.flip()
     if w != h: ## if the x and y window size are different
-        pygame.display.set_mode((h, h), pygame.RESIZABLE) ## keeping a constant 1:1 ratio
-    if music.get_busy() == False:
-        mixer.init()
-        pygame.mixer.set_num_channels(8)
-        music = pygame.mixer.Channel(1)
-        mainMenuTestMusic = pygame.mixer.Sound("assets\\fallout 4 menu.mp3")    ## makes music repeat if the audo surface isn't playing anything
-        music.set_volume(1)
-        music.play(mainMenuTestMusic)
-        
-                                                    ## RUNTIME
-        
-    for i in pygame.event.get():
+        window.set_mode((w, w), pygame.RESIZABLE) ## keeping a constant 1:1 ratio           
 
-        if i.type == pygame.QUIT: ## if X button is pressed
-            status = False
+    status = handle_input()
 
 pygame.quit()
