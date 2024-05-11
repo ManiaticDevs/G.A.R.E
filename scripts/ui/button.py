@@ -15,7 +15,9 @@ class Button:
     def update(self, screen, mouse):
         self.update_with_pos(self.x,self.y, screen, mouse)
     
-    def update_with_pos(self, x, y, screen, mouse): # handles drawing and logic
+    def update_with_pos(self, x, y, screen, mouse, font): # handles drawing and logic
+        self.x = x
+        self.y = y
         self.clicked = False
         mx, my = mouse.get_pos() # gets position
         if(self.y + self.height/2 > my and self.y-self.height/2 < my and self.x+self.width/2 > mx and self.x-self.width/2 < mx): # checks the bounds from x, y using width and height
@@ -29,11 +31,15 @@ class Button:
         else:
             self.hovering = False
         screen.blit(self.image, (self.x-self.width/2,self.y-self.height/2))
-    
+        self.drawString(font)
+
     def update_position(self, x, y): # guess.
         self.x = x
         self.y = y
     
+    def drawString(self, font):
+        pass 
+
     def is_hovering(self): # returns true the mouse is hovering over it
         return self.hovering
 
